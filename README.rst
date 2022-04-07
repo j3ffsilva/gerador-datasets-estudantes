@@ -11,42 +11,28 @@ Gerador de Datasets
 
 Este projeto implementa um gerador de dados aleatórios para estudantes do ensino superior no Brasil.
 
-Usage
------
-
-Para usar o gerador:
-
-```python
-from cdia.datasets import DatasetEstudantes
-
-n_amostra = 10
-
-#  O método criar retorna um DataFrame (Pandas)
-df = DatasetEstudantes.criar(n_amostra)
-```
-
-Installation
+Instalação
 ------------
 
-Clone o repositório e instale com o pip.
-```bash
-git clone git@github.com:j3ffsilva/gerador-datasets-estudantes.git
-cd gerador-datasets-estudantes/
-pip install .
-```
+Clone o repositório e instale com o pip::
 
-Requirements
-^^^^^^^^^^^^
+  git clone git@github.com:j3ffsilva/gerador-datasets-estudantes.git
+  cd gerador-datasets-estudantes/
+  pip install .
 
 
+Uso
+-----
 
-Compatibility
--------------
+Para usar o gerador::
 
-Licence
--------
+  from cdia.datasets import DatasetEstudantes
+  n_amostra = 10
+
+  #  O método criar retorna um DataFrame (Pandas)
+  df = DatasetEstudantes.criar(n_amostra)
 
 Authors
 -------
 
-This project was written by `Jeff <silvajo@pucsp.br>`_.
+Este projeto foi escrito por `Jeff <silvajo@pucsp.br>`_.
