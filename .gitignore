@@ -1,7 +1,9 @@
 *.py[cod]
-
+x
 # C extensions
 *.so
+
+.DS_Store
 
 # Packages
 *.egg

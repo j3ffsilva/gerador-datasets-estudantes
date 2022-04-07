@@ -1,7 +1,12 @@
-from artefatos import Gerador, Transformador
+from cdia.artefatos import Gerador, Transformador
 from math import floor, ceil, log
-from random import shuffle
+from random import shuffle, randint, choice
+import json
+import cdia.config as config
 
+def ler(arquivo):
+    with open(arquivo, 'r') as f:
+        return f.read().split('\n')
 class Coluna:
 
     def atualizar(self, correls):
@@ -94,12 +99,102 @@ class ColunaMotivacao(Coluna):
         self.valores.reverse()
 
 class ColunaMatricula(Coluna):
+    QTDE_DIGITOS = 6
+    RAIZ = "RA55"
 
     def __init__(self, n_amostra):
-        raiz = "RA55"
-        self.valores = [f"{raiz}{self.__preencher_zeros(i)}{i}" \
+        self.valores = [f"{ColunaMatricula.RAIZ}{self.__preencher_zeros(i)}{i}" \
                                                 for i in range(1,n_amostra+1)]
 
     def __preencher_zeros(self, i):
         tam = len(str(i))
-        return "0" * (6 - tam)
+        return "0" * (ColunaMatricula.QTDE_DIGITOS - tam)
+
+class ColunaSexo(Coluna):
+    LEG_M = 1
+    LEG_F = 2
+
+    def __init__(self, n_amostra, prop_M=.5, prop_F=.5):
+        qtd_M, qtd_F = self._div(n_amostra, prop_M, prop_F)
+        self.valores = []
+        self.valores.extend([ColunaSexo.LEG_M] * qtd_M)
+        self.valores.extend([ColunaSexo.LEG_F] * qtd_F)
+        shuffle(self.valores)
+
+    def _div(self, n_amostra, prop_M, prop_F):
+
+        assert(prop_M + prop_F == 1.)
+
+        qtd_M = int(n_amostra * prop_M)
+        qtd_F = int(n_amostra * prop_F)
+
+        # Se n_amostra for par
+        if (qtd_M + qtd_F == n_amostra):
+            return qtd_M, qtd_F
+        else:
+            sorteado = randint(0,1)
+            qtd_M = qtd_M + sorteado
+            qtd_F = qtd_F + 1 - sorteado
+            return qtd_M, qtd_F
+
+class ColunaNome(Coluna):
+    LEG_M = ColunaSexo.LEG_M
+    LEG_F = ColunaSexo.LEG_F
+
+    def __init__(self, n_amostra, sexos=None):
+        resources_dir = config.RESOURCES_DIR
+        self.sobrenomes = ler(f'{resources_dir}sobrenomes.tsv')
+        self.nomes_M = ler(f'{resources_dir}nomes-masculinos.tsv')
+        self.nomes_F = ler(f'{resources_dir}nomes-femininos.tsv')
+        self.valores = []
+        if (sexos):
+            for sexo in sexos:
+                self.valores.append(self._gerar_um_nome(sexo))
+        else:
+            for i in range(n_amostra):
+                sexo = randint(ColunaNome.LEG_M, ColunaNome.LEG_F)
+                self.valores.append(self._gerar_um_nome(sexo))
+
+    def _gerar_um_nome(self, sexo):
+        nomes = self.nomes_M if (sexo == ColunaNome.LEG_M) else self.nomes_F
+        nome_ = choice(nomes).title()
+        qtd_sobrenomes = randint(1,3)
+        sobrenome_ = ""
+        for i in range(qtd_sobrenomes):
+            sobrenome_ += f" {choice(self.sobrenomes).title()}"
+        return f"{nome_}{sobrenome_}"
+
+class MultiColunaEndereco(Coluna):
+
+    def __init__(self, n_amostra):
+        """
+        """
+        resources_dir = config.RESOURCES_DIR
+        self.todos_enderecos = ler(f'{resources_dir}endereços.json')
+        self.valores = []
+
+        lst_logradouros = []
+        lst_numeros = []
+        lst_bairros = []
+        lst_cidades = []
+        lst_ufs = []
+        lst_ceps = []
+
+        for i in range(n_amostra):
+            end = json.loads(choice(self.todos_enderecos))
+
+            lst_logradouros.append( end['logradouro'] )
+            lst_numeros.append( end['numero'] )
+            lst_bairros.append( end['bairro'] )
+            lst_cidades.append( end['cidade'] )
+            lst_ufs.append( end['uf'] )
+            lst_ceps.append( end['cep'] )
+
+        self.valores = (
+            lst_logradouros,
+            lst_numeros,
+            lst_bairros,
+            lst_cidades,
+            lst_ufs,
+            lst_ceps,
+        )

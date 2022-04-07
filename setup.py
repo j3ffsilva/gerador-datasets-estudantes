@@ -5,16 +5,14 @@ import re
 from setuptools import find_packages
 from setuptools import setup
 
-
 def read(filename):
     filename = os.path.join(os.path.dirname(__file__), filename)
     text_type = type(u"")
     with io.open(filename, mode="r", encoding='utf-8') as fd:
         return re.sub(text_type(r':[a-z]+:`~?(.*?)`'), text_type(r'``\1``'), fd.read())
 
-
 setup(
-    name="cdia3_22",
+    name="cdia",
     version="0.1.0",
     url="https://github.com/kragniz/cookiecutter-pypackage-minimal",
     license='MIT',
@@ -25,8 +23,9 @@ setup(
     description="Um gerador de datasets de estudantes do ensino superior",
     long_description=read("README.rst"),
 
-    packages=find_packages(include=['cdia3_22']),
-    #package_dir={'': 'cdia3_22'},
+    packages=['cdia', 'cdia.resources'],
+    package_data={'cdia.resources': ['*']},
+    include_package_data=True,
 
     install_requires=[],
 
