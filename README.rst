@@ -1,4 +1,4 @@
-cdia3
+Gerador de Datasets
 ========
 
 .. image:: https://img.shields.io/pypi/v/cdia3.svg
@@ -9,16 +9,36 @@ cdia3
    :target: https://travis-ci.org/kragniz/cookiecutter-pypackage-minimal
    :alt: Latest Travis CI build status
 
-Um gerador de datasets de estudantes do ensino superior
+Este projeto implementa um gerador de dados aleatórios para estudantes do ensino superior no Brasil.
 
 Usage
 -----
 
+Para usar o gerador:
+
+```python
+from cdia.datasets import DatasetEstudantes
+
+n_amostra = 10
+
+#  O método criar retorna um DataFrame (Pandas)
+df = DatasetEstudantes.criar(n_amostra)
+```
+
 Installation
 ------------
 
+Clone o repositório e instale com o pip.
+```bash
+git clone git@github.com:j3ffsilva/gerador-datasets-estudantes.git
+cd gerador-datasets-estudantes/
+pip install .
+```
+
 Requirements
 ^^^^^^^^^^^^
+
+
 
 Compatibility
 -------------
@@ -29,4 +49,4 @@ Licence
 Authors
 -------
 
-`cdia3` was written by `Jeff <silvajo@pucsp.br>`_.
+This project was written by `Jeff <silvajo@pucsp.br>`_.
