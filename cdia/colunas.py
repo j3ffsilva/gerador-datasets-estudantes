@@ -231,10 +231,20 @@ class ColunaEscola(Coluna):
                 self.valores.append(ColunaEscola.LEG_PUBL)
             elif (nivel >= 2 and nivel <= 5):
                 sorteado = choice([
-                            ColunaEscola.LEG_PUBL, 
+                            ColunaEscola.LEG_PUBL,
                             ColunaEscola.LEG_PART,
                             ColunaEscola.LEG_PART,
                 ])
                 self.valores.append(sorteado)
             elif (nivel > 5):
                 self.valores.append(ColunaEscola.LEG_PART)
+
+class ColunaCurso(Coluna):
+
+    def __init__(self, n_amostra):
+        n_cursos = n_amostra // self._obter_n_classes(n_amostra) + 1
+        cod_cursos = [i+1 for i in range(n_cursos)]
+        self.valores = [choice(cod_cursos) for i in range(n_amostra)]
+
+    def _obter_n_classes(self, n_amostra):
+        return round(log(n_amostra)) * 10

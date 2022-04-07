@@ -16,6 +16,7 @@ class DatasetEstudantes:
         col_endereco = MultiColunaEndereco(n_amostra)
         col_ano_curso = ColunaAnoCurso(n_amostra, col_idade.valores)
         col_escola = ColunaEscola(n_amostra, col_renda.valores)
+        col_cod_curso = ColunaCurso(n_amostra)
 
         cols_correls = [
             col_idade,
@@ -35,6 +36,7 @@ class DatasetEstudantes:
         map_['sexo'] = col_sexo.valores
         map_['ano_curso'] = col_ano_curso.valores
         map_['escola'] = col_escola.valores
+        map_['cod_curso'] = col_cod_curso.valores
 
         map_['logradouro'] = lst_logs
         map_['numero'] = lst_nums
