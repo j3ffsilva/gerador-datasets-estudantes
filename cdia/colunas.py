@@ -7,29 +7,27 @@ import cdia.config as config
 def ler(arquivo):
     with open(arquivo, 'r') as f:
         return f.read().split('\n')
+
 class Coluna:
 
     def atualizar(self, correls):
         pass
 
 class ColunaRenda(Coluna):
+    SAL_MIN = 1221.
+    CLASSES = {
+        0: {'min': 0.0, 'max': SAL_MIN / 2, 'perc': 0.038},
+        1: {'min': (SAL_MIN / 2) + 0.01, 'max': SAL_MIN, 'perc': 0.226},
+        2: {'min': SAL_MIN + 0.01, 'max': 2 * SAL_MIN, 'perc': 0.438},
+        3: {'min': 2 * SAL_MIN + 0.01, 'max': 3 * SAL_MIN, 'perc': 0.149},
+        4: {'min': 3 * SAL_MIN + 0.01, 'max': 5 * SAL_MIN, 'perc': 0.096},
+        5: {'min': 5 * SAL_MIN + 0.01, 'max': 10 * SAL_MIN, 'perc': 0.037},
+        6: {'min': 10 * SAL_MIN + 0.01, 'max': 20 * SAL_MIN, 'perc': 0.01},
+        7: {'min': 20 * SAL_MIN + 0.01, 'max': 10 ** 6, 'perc': 0.004},
+    }
 
     def __init__(self, n_amostra):
-
-        SAL_MIN = 1221.
-
-        _classes = {
-            0: {'min': 0.0, 'max': SAL_MIN / 2, 'perc': 0.038},
-            1: {'min': (SAL_MIN / 2) + 0.01, 'max': SAL_MIN, 'perc': 0.226},
-            2: {'min': SAL_MIN + 0.01, 'max': 2 * SAL_MIN, 'perc': 0.438},
-            3: {'min': 2 * SAL_MIN + 0.01, 'max': 3 * SAL_MIN, 'perc': 0.149},
-            4: {'min': 3 * SAL_MIN + 0.01, 'max': 5 * SAL_MIN, 'perc': 0.096},
-            5: {'min': 5 * SAL_MIN + 0.01, 'max': 10 * SAL_MIN, 'perc': 0.037},
-            6: {'min': 10 * SAL_MIN + 0.01, 'max': 20 * SAL_MIN, 'perc': 0.01},
-            7: {'min': 20 * SAL_MIN + 0.01, 'max': 10 ** 6, 'perc': 0.004},
-        }
-
-        self.valores = Gerador.classes(n_amostra, _classes)
+        self.valores = Gerador.classes(n_amostra, ColunaRenda.CLASSES)
         self.min_ = min(self.valores)
         self.max_ = max(self.valores)
         self.n_amostra = n_amostra
@@ -37,6 +35,12 @@ class ColunaRenda(Coluna):
     def atualizar(self, correls):
         vals = Transformador.rescale(correls, self.min_, self.max_)
         self.valores = [round(n, 2) for n in vals]
+
+    def obter_nivel(renda):
+        map_ = ColunaRenda.CLASSES
+        for chave in map_.keys():
+            if (renda >= map_[chave]['min'] and renda <= map_[chave]['max']):
+                return chave
 
 class ColunaIdade(Coluna):
 
@@ -198,3 +202,39 @@ class MultiColunaEndereco(Coluna):
             lst_ufs,
             lst_ceps,
         )
+
+class ColunaAnoCurso(Coluna):
+
+    def __init__(self, n_amostra, idades):
+        IDADE_BASE = 16
+        anos_cursos = []
+
+        for idade in idades:
+            if (idade <= IDADE_BASE):
+                anos_cursos.append(1)
+            elif (idade < 22):
+                anos_cursos.append(idade % IDADE_BASE)
+            elif (idade >= 22):
+                anos_cursos.append(choice([1,2,3,4,5]))
+        self.valores = anos_cursos
+
+class ColunaEscola(Coluna):
+    LEG_PUBL = 1
+    LEG_PART = 2
+
+    def __init__(self, n_amostra, rendas):
+
+        self.valores = []
+        for renda in rendas:
+            nivel = ColunaRenda.obter_nivel(renda)
+            if (nivel < 2):
+                self.valores.append(ColunaEscola.LEG_PUBL)
+            elif (nivel >= 2 and nivel <= 5):
+                sorteado = choice([
+                            ColunaEscola.LEG_PUBL, 
+                            ColunaEscola.LEG_PART,
+                            ColunaEscola.LEG_PART,
+                ])
+                self.valores.append(sorteado)
+            elif (nivel > 5):
+                self.valores.append(ColunaEscola.LEG_PART)
