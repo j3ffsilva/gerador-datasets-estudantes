@@ -32,7 +32,7 @@ Para usar o gerador::
   #  O método criar retorna um DataFrame (Pandas)
   df = DatasetEstudantes.criar(n_amostra)
 
-Authors
+Autoria
 -------
 
 Este projeto foi escrito por `Jeff <silvajo@pucsp.br>`_.
