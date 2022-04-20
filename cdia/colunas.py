@@ -4,8 +4,8 @@ from random import shuffle, randint, choice
 import json
 import cdia.config as config
 
-def ler(arquivo):
-    with open(arquivo, 'r') as f:
+def ler(arquivo, encoding='utf-8'):
+    with open(arquivo, 'r', encoding=encoding) as f:
         return f.read().split('\n')
 
 class Coluna:
@@ -174,7 +174,7 @@ class MultiColunaEndereco(Coluna):
         """
         """
         resources_dir = config.RESOURCES_DIR
-        self.todos_enderecos = ler(f'{resources_dir}endereços.json')
+        self.todos_enderecos = ler(f'{resources_dir}endereços.json', encoding='utf-8')
         self.valores = []
 
         lst_logradouros = []
