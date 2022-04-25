@@ -49,3 +49,22 @@ class DatasetEstudantes:
         map_['motivação'] = col_motivacao.valores
 
         return pd.DataFrame(map_)
+
+class DatasetCandidatos:
+
+    def criar(n_amostra):
+
+        col_pontuacao = ColunaPontuacao(n_amostra)
+        col_admissao = ColunaAdmissao(n_amostra)
+
+        cols_correls = [
+            col_pontuacao,
+            col_admissao,
+        ]
+        Transformador.correlacionar(cols_correls)
+
+        map_ = {}
+        map_['pontuação'] = col_pontuacao.valores
+        map_['admitido'] = col_admissao.valores
+
+        return pd.DataFrame(map_)

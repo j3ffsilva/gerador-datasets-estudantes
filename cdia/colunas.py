@@ -248,3 +248,35 @@ class ColunaCurso(Coluna):
 
     def _obter_n_classes(self, n_amostra):
         return round(log(n_amostra)) * 10
+
+class ColunaPontuacao(Coluna):
+
+    def __init__(self, n_amostra):
+        classes_ = {
+            0: {'min': 0,   'max': 199,  'perc': 15.00},
+            1: {'min': 200, 'max': 499,  'perc': 30.00},
+            2: {'min': 500, 'max': 699,  'perc': 40.00},
+            3: {'min': 700, 'max': 899,  'perc': 10.},
+            4: {'min': 900, 'max': 1000, 'perc': .05},
+        }
+
+        self.valores = Gerador.classes(n_amostra, classes_)
+        self.min_ = min(self.valores)
+        self.max_ = max(self.valores)
+        self.n_amostra = n_amostra
+
+    def atualizar(self, correls):
+        vals = Transformador.rescale(correls, self.min_, self.max_)
+        self.valores = [int(n) for n in vals]
+
+class ColunaAdmissao(Coluna):
+    def __init__(self, n_amostra):
+        self.valores = [choice([0,1]) for i in range(n_amostra)]
+        self.min_ = 0
+        self.max_ = 1
+        self.n_amostra = n_amostra
+
+    def atualizar(self, correls):
+        vals = Transformador.rescale(correls, self.min_, self.max_)
+        rounded = [round(n) for n in vals]
+        self.valores = rounded
